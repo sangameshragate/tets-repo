@@ -18,7 +18,7 @@ on:
           - 'destroy'
 
 env:
-  TF_VERSION: '1.5.6'
+  TF_VERSION: '1.6.0'
   AWS_REGION: 'us-east-1'
 
 jobs:
@@ -28,28 +28,31 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS-ACCESS-KEY }}
           aws-secret-access-key: ${{ secrets.AWS-SECRET-KEY }}
-          aws-region: us-east-1
-          audience: sts.amazonaws.com
-         
+          aws-region: ${{ env.AWS_REGION }}
           
 
-      - name: Terraform Init
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init stage  
         run: terraform init
 
-      - name: Terraform Plan
+      - name: Terraform Plan stage
         run: terraform plan
 
-      - name: Terraform Apply or Destroy
-        if: ${{ github.event.inputs.action == 'apply' }}
+      - name: Terraform Apply stage
+        if: githhub.event.name == 'push' || github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
-        if: ${{ github.event.inputs.action == 'destroy' }}
+      - name: Terraform Destroy stage
+        if: githhub.event.name == 'workflow_dispatch' && github.event.inputs.action == 'destroy'
         run: terraform destroy -auto-approve
