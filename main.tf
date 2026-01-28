@@ -7,7 +7,7 @@ resource "aws_subnet" "subnet1" {
   cidr_block = var.subnet_cidr
 
   tags = {
-    Name = "subnet1"
+    Name = "subnet-sangu"
   }
 }
 resource "aws_internet_gateway" "igw1" {
