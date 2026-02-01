@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: 'Action to perform'
+        description: 'Action to perform ON SCRIPT'
         required: true
         default: 'apply'
         type: choice
